@@ -38,13 +38,14 @@ class Environment:
             if info['ale.lives'] != 5:
                 done = True
             is_done = is_done or done
-            reward_sum += reward
+            reward_sum += np.sign(reward)
             frames.push(state)
 
         if self.action_repeat > 1:
             state = np.maximum(*frames.get(2))
         
         state = util.reduce_image(state)
+        state = np.array(state).astype(np.float32) / 255.0
         self.state = state
 
         if self.display:

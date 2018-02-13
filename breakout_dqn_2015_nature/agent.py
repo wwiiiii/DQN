@@ -42,7 +42,14 @@ class Agent:
             for i in range(len(qnet_vars))
         ]
 
-        self.optimizer = tf.train.AdamOptimizer(self.opt.LEARNING_RATE).minimize(self.qnet['loss'])
+        self.optimizer = tf.train.AdamOptimizer(self.opt.LEARNING_RATE)#
+        if self.opt.GRADIENT_CLIP > 0.0:
+            grads_and_vars = self.optimizer.compute_gradients(self.qnet['loss'])
+            clipped = [(tf.clip_by_norm(gv[0], self.opt.GRADIENT_CLIP), gv[1]) if gv[0] is not None else gv\
+                        for gv in grads_and_vars]
+            self.optimizer = self.optimizer.apply_gradients(clipped)
+        else:
+            self.optimizer = self.optimizer.minimize(self.qnet['loss'])
 
         self.memory = util.Queue(self.opt.MEMORY_SIZE)#util.replay_memory(self.opt.MEMORY_SIZE)
         self.history = util.Queue(self.opt.HISTORY_SIZE)

@@ -17,10 +17,9 @@ def main():
         age = Agent(env, sess, logger)
         sess.run(tf.global_variables_initializer())
         
-        start_episode = 0 # if load past
+        start_episode = 12345 # if load past
         if start_episode > 0:
             age.load(meta_graph='./save/'+opt.PREFIX+'-%s.meta' % start_episode, step=start_episode)#age.save(True)#
-            age.train(start_episode=start_episode)#age.train()#
         else:
             age.save(True)
             age.train(start_episode=0)
